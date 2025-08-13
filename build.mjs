@@ -20,6 +20,8 @@ import { zip, COMPRESSION_LEVEL } from "zip-a-folder";
     .replaceAll("const ", "let ")
     .replaceAll("undefined", "void 0");
 
+  fs.unlinkSync('./index.js');
+
   console.log("Minify JS...");
   const minifiedJS = await minify.js(indexJS);
 
@@ -43,8 +45,8 @@ import { zip, COMPRESSION_LEVEL } from "zip-a-folder";
       () => `<style>${minifiedCSS}</style>`
     )
     .replaceAll('"use strict";', "")
-    .replaceAll("./images/sprites.png", toBase64Url("./images/sprites.png"))
     // TODO: add your own long texts to replace
+    //.replaceAll("./images/sprites.png", toBase64Url("./images/sprites.png"))
     //.replaceAll("--primary-light", "--pl");
 
   const ids = [...indexHTML.matchAll(/id="([^"]*?)"/g)];
@@ -56,8 +58,6 @@ import { zip, COMPRESSION_LEVEL } from "zip-a-folder";
   });
 
   const minifiedHTML = await minify.html(indexHTML);
-
-  fs.writeFileSync("min.html", minifiedHTML, { encoding: "utf8" });
 
   console.log("Pack project...");
   const inputToPack = [
